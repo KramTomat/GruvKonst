@@ -58,40 +58,45 @@ int main(int argc, char *args[])
 void MoveRectangleAround(SDL_Surface* surface, SDL_Window* window)
 {
 	SDL_Rect* rectangle = new SDL_Rect();
+	int x, y;
+	bool quit = false, draw = false;
+	Uint8 red, green, blue;
+	red = green = blue = 0x00;
+	while (!quit)
 	{
-		int x, y;
-		bool quit = false;
-		Uint8 red, green, blue;
-		red = green = blue = 0x00;
-		while (!quit)
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
 		{
-			SDL_Event event;
-			while (SDL_PollEvent(&event))
+			if (event.type == SDL_EventType::SDL_MOUSEMOTION)
 			{
-				if (event.type == SDL_EventType::SDL_MOUSEMOTION)
-				{
-					red = rand() % 255;
-					green = rand() % 255;
-					blue = rand() % 255;
-				}
-				if (event.type == SDL_QUIT)
-				{
-					quit = true;
-				}
+				red = rand() % 255;
+				green = rand() % 255;
+				blue = rand() % 255;
 			}
-
-			SDL_SetCursor(NULL);
-			SDL_GetMouseState(&x, &y);
-
-			rectangle->h = 50;
-			rectangle->w = 100;
-			rectangle->x = x;
-			rectangle->y = y;
-
-			SDL_FillRect(surface, rectangle, SDL_MapRGB(surface->format, red, green, blue));
-
-			SDL_UpdateWindowSurface(window);
-
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+			{
+				draw = true;
+			}
+			if (event.type == SDL_MOUSEBUTTONUP)
+			{
+				draw = false;
+			}
+			if (event.type == SDL_QUIT)
+			{
+				quit = true;
+			}
 		}
+
+		SDL_SetCursor(NULL);
+		SDL_GetMouseState(&x, &y);
+
+		rectangle->h = 5;
+		rectangle->w = 5;
+		rectangle->x = x;
+		rectangle->y = y;
+
+		if (draw) SDL_FillRect(surface, rectangle, SDL_MapRGB(surface->format, red, green, blue));
+
+		SDL_UpdateWindowSurface(window);
 	}
 }
